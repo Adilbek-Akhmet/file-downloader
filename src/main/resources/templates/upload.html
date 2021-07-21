@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+  <title></title>
+</head>
+<style>
+  body {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .form {
+    border: 2px solid #333;
+    border-radius: 10px;
+    margin-top: 50px;
+  }
+
+  .form-content {
+    padding: 15px;
+  }
+
+  .form-item {
+    margin-bottom: 20px;
+  }
+
+  .bottom {
+    border-top: 2px solid #333;
+    padding: 10px 0;
+  }
+
+  .password-input-inner {
+    display: flex;
+    align-items: center;
+  }
+
+  .password-show-button {
+    margin-left: -30px;
+    cursor: pointer;
+  }
+
+  .password-generate-btn {
+    margin-top: 10px;
+  }
+
+  /* Result box */
+  .result-box {
+    border: 2px solid #333;
+    border-radius: 10px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 15px;
+  }
+
+  .result-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .result-item {
+    display: flex;
+    width: auto;
+    margin-bottom: 10px;
+  }
+
+  .result:last-child {
+    margin: 0;
+  }
+
+  .result-item-name {
+    color: #000;
+    font-weight: 500;
+    margin-right: 5px;
+  }
+
+  .result-item-value {
+    word-break: break-all;
+  }
+  /* Errow alert */
+  .err-alert-outer {
+    display: flex; /* Мынаны display: none деу керек */
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .err-alert {
+    background: #fff;
+    border-radius: 15px;
+  }
+
+  .err-alert-text {
+    padding: 30px;
+    font-size: 24px;
+  }
+
+  .err-alert-bottom {
+    display: flex;
+    justify-content: center;
+    border-top: 2px solid #ddd;
+    padding: 10px 0;
+  }
+
+  /* Header */
+  header {
+    background: #f7f7f7;
+    padding: 15px 0;
+    transition: 0.2s linear;
+  }
+
+  header:hover {
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .header-nav {
+    display: flex;
+  }
+
+  .nav-item {
+    margin-left: 30px;
+    transition: 0.1s linear;
+  }
+
+  .nav-item:first-child {
+    margin-left: 0;
+  }
+
+  .nav-item:hover {
+    color: #02b7db;
+  }
+</style>
+<body>
+<div th:if="${message != null}" class="err-alert-outer">
+  <div class="err-alert">
+    <div class="err-alert-text">
+      <span th:text="${message}"></span>
+    </div>
+    <div class="err-alert-bottom">
+      <a href="/upload">
+        <div class="err-alert-btn btn btn-danger">
+          Закрыть
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      One-login One-file
+    </div>
+    <nav class='header-nav'>
+      <form class="form-signin" method="post" th:action="@{/logout}">
+        <button class="btn btn-primary nav-item" type="submit">Log Out</button>
+      </form>
+    </nav>
+  </div>
+</header>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-5 md">
+      <form class="form" th:action="@{/upload}" th:object="${file}" method="post" encType="multipart/form-data">
+        <div class="form-content">
+          <div class="form-item">
+            <label for="login" class="form-label">Имя пользователя</label>
+            <input type="text" class="form-control" id="login" th:field="*{login}" required>
+          </div>
+          <div class="form-item">
+            <label for="password" class="form-label">Пароль</label>
+            <div class="password-input-inner">
+              <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                <i class="far fa-eye password-show-button" id="togglePassword"></i>
+            </div>
+            <input type="button" class="btn btn-primary password-generate-btn" id="btn" value="Генерация пароля"/>
+          </div>
+          <div class="form-item password-generate">
+
+          </div>
+          <div class="form-item">
+            <label for="date" class="form-label">Время</label>
+            <input class="form-control" type="datetime-local" th:field="*{time}" id="date" required>
+          </div>
+          <div class="form-item">
+            <label for="multipart" class="form-label">Файл</label>
+            <input type="file" name="multipart" class="form-control" id="multipart" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center bottom">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" th:if="${response != null}">
+    <div class="col-lg-5">
+      <div class="result-box">
+        <div class="result-title">Результат</div>
+        <div class="result-item">
+          <div class="result-item-name">Имя пользователя: </div>
+          <div class="result-item-value">
+            <span th:text="${response.getUsername()}" />
+          </div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-name">Пароль: </div>
+          <div class="result-item-value">
+            <span th:text="${response.getPassword()}" />
+          </div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-name">Ссылка: </div>
+          <div class="result-item-value">
+            <span th:text="${response.getUrl()}" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+  
+    togglePassword.addEventListener('click', function (e) {
+      // toggle the type attribute
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      // toggle the eye slash icon
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    const login = document.querySelector('#login');
+    const pass = document.querySelector('#password');
+    const btn = document.querySelector('#btn');
+
+    function randomGenerate() {
+      var length = 8,
+              charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+              retVal = "";
+      for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+      }
+      return retVal;
+    }
+
+    btn.addEventListener('click', () => {
+      login.value = randomGenerate();
+      pass.value = randomGenerate();
+    })
+  </script>
+
+
+</body>
+</html>
