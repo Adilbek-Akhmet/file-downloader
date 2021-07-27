@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
   <title></title>
@@ -146,20 +147,10 @@
   }
 </style>
 <body>
-<div th:if="${message != null}" class="err-alert-outer">
-  <div class="err-alert">
-    <div class="err-alert-text">
-      <span th:text="${message}"></span>
-    </div>
-    <div class="err-alert-bottom">
-      <a href="/upload">
-        <div class="err-alert-btn btn btn-danger">
-          Закрыть
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
+
+
+
+
 
 <header>
   <div class="header-inner">
@@ -174,13 +165,23 @@
   </div>
 </header>
 
+
+
   <div class="row justify-content-center">
     <div class="col-lg-5 md">
+
+      <div class="error mt-3" th:if="${message != null}">
+        <div class="alert alert-danger alert-dismissible fade show">
+          <strong>Error!</strong> <span th:text="${message}"></span>
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+      </div>
+
       <form class="form" th:action="@{/upload}" th:object="${file}" method="post" encType="multipart/form-data">
         <div class="form-content">
           <div class="form-item">
             <label for="login" class="form-label">Имя пользователя</label>
-            <input type="text" class="form-control" id="login" th:field="*{login}" required>
+            <input type="text" class="form-control" id="login" th:field="*{login}"  required>
           </div>
           <div class="form-item">
             <label for="password" class="form-label">Пароль</label>
@@ -235,38 +236,10 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-  <script>
-    const togglePassword = document.querySelector('#togglePassword');
-    const password = document.querySelector('#password');
-  
-    togglePassword.addEventListener('click', function (e) {
-      // toggle the type attribute
-      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-      password.setAttribute('type', type);
-      // toggle the eye slash icon
-      this.classList.toggle('fa-eye-slash');
-    });
 
-    const login = document.querySelector('#login');
-    const pass = document.querySelector('#password');
-    const btn = document.querySelector('#btn');
-
-    function randomGenerate() {
-      var length = 8,
-              charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-              retVal = "";
-      for (var i = 0, n = charset.length; i < length; ++i) {
-        retVal += charset.charAt(Math.floor(Math.random() * n));
-      }
-      return retVal;
-    }
-
-    btn.addEventListener('click', () => {
-      login.value = randomGenerate();
-      pass.value = randomGenerate();
-    })
-  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:src="@{upload.js}"></script>
 
 
 </body>

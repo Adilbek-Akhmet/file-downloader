@@ -46,6 +46,8 @@ public class FileController {
     public String save(@RequestParam("multipart") MultipartFile file, @ModelAttribute("file") FileRequest fileRequest, Model model)
             throws FileNotFoundException, ParseException {
 
+        fileRequest.setFile(file);
+
         if (fileService.findOneByLogin(fileRequest.getLogin()).isPresent()) {
             model.addAttribute("message", "Введите другое имя пользователя!");
             return "upload";
@@ -56,7 +58,7 @@ public class FileController {
             return "upload";
         }
 
-        fileRequest.setFile(file);
+
         FileResponse fileResponse = fileService.saveUser(fileRequest);
         fileResponse.setPassword(fileRequest.getPassword());
         model.addAttribute("response", fileResponse);
