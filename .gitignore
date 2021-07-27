@@ -1,8 +1,15 @@
 HELP.md
-#target/
+target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+#logs
+*.log
+*.gz
+
+#database
+*.sqllite
 
 ### STS ###
 .apt_generated
