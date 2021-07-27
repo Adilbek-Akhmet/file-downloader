@@ -9,7 +9,7 @@ target/
 *.gz
 
 #database
-*.sqllite
+*.sqlite
 
 ### STS ###
 .apt_generated
