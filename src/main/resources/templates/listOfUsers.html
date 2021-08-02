@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список пользователей</title>
+    <link th:href="@{/css/bootstrap-5.css}" rel="stylesheet">
+</head>
+<style>
+    /* Header */
+    header {
+        background: #f7f7f7;
+        padding: 15px 0;
+        transition: 0.2s linear;
+    }
+
+    .header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .header-nav {
+        display: flex;
+    }
+
+    .nav-item {
+        margin-left: 30px;
+        transition: 0.1s linear;
+    }
+
+    .nav-item:first-child {
+        margin-left: 0;
+    }
+
+    .nav-item:hover {
+        color: #02b7db;
+    }
+</style>
+<body>
+<header>
+    <div class="header-inner">
+        <div class="header-brand">
+            One-login One-file
+        </div>
+        <nav class='header-nav'>
+            <a href="/upload"><button class="btn btn-primary nav-item" type="submit">Загрузить</button></a>
+            <form class="form-signin" method="post" th:action="@{/logout}">
+                <button class="btn btn-primary nav-item" type="submit">Выйти</button>
+            </form>
+
+        </nav>
+    </div>
+</header>
+
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Имя файла</th>
+        <th>Истекает</th>
+        <th>Логин</th>
+        <th>Пароль</th>
+        <th>URL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="file : ${list}">
+        <td th:text="${file.getId()}"></td>
+        <td th:text="${file.getFileName()}"></td>
+        <td th:text="${file.getExpiredAt()}"></td>
+        <td th:text="${file.getUsername()}"></td>
+        <td th:text="${file.getPassword()}"></td>
+        <td th:text="${downloadPrefix.getDomain() + '/' + downloadPrefix.getPrefix() + '/' + file.getUrl()}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
