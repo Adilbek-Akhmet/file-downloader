@@ -11,8 +11,9 @@ import sp.model.AppFile;
 import sp.model.FolderStorage;
 import sp.repository.FileRepository;
 
-import java.io.FileNotFoundException;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -23,35 +24,43 @@ import java.util.*;
 @AllArgsConstructor
 public class FileServiceImpl {
 
-    private final PasswordEncoder passwordEncoder;
     private final FileRepository fileRepository;
     private final FileFolderStorageServiceImpl fileFolderStorageService;
     private final FolderStorage folderStorage;
     private final DownloadPrefix downloadPrefix;
 
-    public FileResponse saveUser(FileRequest fileRequest) throws FileNotFoundException, ParseException {
+    public FileResponse saveUser(FileRequest fileRequest) throws IOException, ParseException {
 
-        Date format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(fileRequest.getTime());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date format = simpleDateFormat.parse(fileRequest.getTime());
+
         Instant instant = format.toInstant();
-
-
 
         String url = UUID.randomUUID().toString();
 
-        AppFile appFile = new AppFile(folderStorage.getPath().concat(Objects.requireNonNull(fileRequest.getFile().getOriginalFilename())),
-                instant, url, fileRequest.getLogin(), passwordEncoder.encode(fileRequest.getPassword()));
+        AppFile appFile = AppFile.builder()
+                .fileName(fileRequest.getFile().getOriginalFilename())
+                .expiredAt(instant)
+                .url(url)
+                .username(fileRequest.getLogin())
+                .password(fileRequest.getPassword())
+                .build();
 
-        if (!fileFolderStorageService.exists(appFile.getFilePath())) {
-            log.info("Файл не существует на папке");
-            fileFolderStorageService.copyToFolderStorage(fileRequest.getFile());
+        String filePath = folderStorage.getPath()
+                .concat(File.separatorChar + fileRequest.getLogin() + File.separatorChar + appFile.getFileName());
+
+        if (!fileFolderStorageService.exists(filePath)) {
+            log.info("Папка с именем {} не существует на хранилище", appFile.getUsername());
+            fileFolderStorageService.copyToFolderStorage(fileRequest.getFile(), appFile.getUsername());
         }
 
-
         fileRepository.save(appFile);
-        log.info("{} дан доступ к файлу с path-ом {}", appFile.getUsername(), appFile.getFilePath());
+        log.info("{} дан доступ к файлу с path-ом {}", appFile.getUsername(), filePath);
 
         return new FileResponse(fileRequest.getLogin(), fileRequest.getPassword(),
-                downloadPrefix.getDomain() + "/" + downloadPrefix.getPrefix() + "/" + url);
+                downloadPrefix.getDomain() + "/" + downloadPrefix.getPrefix() + "/" + appFile.getUrl());
     }
 
     public Optional<AppFile> findOneByLoginAndUrl(String login, String url) {
@@ -60,5 +69,9 @@ public class FileServiceImpl {
 
     public Optional<AppFile> findOneByLogin(String login) {
         return fileRepository.findByUsername(login);
+    }
+
+    public List<AppFile> findAll() {
+        return fileRepository.findAll();
     }
 }

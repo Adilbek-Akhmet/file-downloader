@@ -1,5 +1,7 @@
 package sp.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +15,9 @@ import java.util.Collections;
 
 @Data
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "files")
 public class AppFile implements UserDetails {
 
@@ -21,7 +25,7 @@ public class AppFile implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String filePath;
+    private String fileName;
 
     private Instant expiredAt;
 
@@ -32,13 +36,6 @@ public class AppFile implements UserDetails {
 
     private String password;
 
-    public AppFile(String filePath, Instant expiredAt, String url, String username, String password) {
-        this.filePath = filePath;
-        this.expiredAt = expiredAt;
-        this.url = url;
-        this.username = username;
-        this.password = password;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

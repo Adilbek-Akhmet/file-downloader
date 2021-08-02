@@ -1,8 +1,10 @@
 sp\dto\FileRequest.class
+sp\exception\FileSizeException.class
 sp\dto\FileResponse.class
 META-INF\spring-configuration-metadata.json
 sp\service\impl\ScheduledTasks.class
 sp\controller\FileController.class
+sp\model\AppFile$AppFileBuilder.class
 sp\config\SecurityConfig.class
 sp\model\FolderStorage.class
 sp\dto\DownloadPrefix.class

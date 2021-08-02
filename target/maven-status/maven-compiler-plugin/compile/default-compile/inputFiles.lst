@@ -7,6 +7,7 @@ C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\dialect\SQLiteDialect.
 C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\model\FolderStorage.java
 C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\service\impl\UserServiceImpl.java
 C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\controller\FileController.java
+C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\exception\FileSizeException.java
 C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\model\Role.java
 C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\service\impl\ScheduledTasks.java
 C:\Users\adilb\IdeaProjects\FileDownload\src\main\java\sp\service\impl\FileFolderStorageServiceImpl.java

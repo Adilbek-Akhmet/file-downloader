@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Please sign in</title>
-    <link rel="stylesheet" th:href="@{css/stackpath.css}">
+    <link rel="stylesheet" th:href="@{/css/stackpath.css}">
 </head>
 <style>
     body {
@@ -51,7 +51,6 @@
 <body>
 <div class="container">
     <form class="form-signin" method="post" th:action="@{/login}">
-        <h2 class="form-signin-heading text-center">Войти</h2>
         <div class="alert alert-danger" role="alert" th:if="${loginError == 'error'}">
             Неправильное имя пользователя или пароль
         </div>
@@ -64,7 +63,7 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
         </p>
         <input name="_csrf" type="hidden" value="192e6e59-46d0-41a9-b712-5f0870b98a1b">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
     </form>
 </div>
 </body>

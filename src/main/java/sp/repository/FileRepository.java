@@ -15,5 +15,6 @@ public interface FileRepository extends JpaRepository<AppFile, Long> {
 
     Optional<AppFile> findByUsernameAndUrl(String username, String url);
 
-    List<AppFile> deleteAllByExpiredAtBefore(Instant time);
+    List<AppFile> findAllByExpiredAtBefore(Instant time);
+
 }

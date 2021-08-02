@@ -71,7 +71,7 @@ public class SecurityConfig  {
                                     .permitAll()
                                 .antMatchers("/login")
                                     .permitAll()
-                                .antMatchers("/upload", "/logout")
+                                .antMatchers("/upload", "/logout", "/list")
                                 .hasAuthority("ADMIN")
                         )
                         .formLogin()

@@ -6,14 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/bootstrap-4.css}">
   <link th:href="@{/css/bootstrap-5.css}" rel="stylesheet">
-<!--  <link rel="stylesheet" th:href="@{/css/font-awesome.css}">-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
-  <title>Upload</title>
+  <title>Загрузить</title>
 </head>
 <style>
 
   body {
     margin: 0;
+    overflow-x: hidden;
     font-size: 16px;
     color: #333;
   }
@@ -90,10 +89,6 @@
     transition: 0.2s linear;
   }
 
-  header:hover {
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
-  }
-
   .header-inner {
     display: flex;
     justify-content: space-between;
@@ -131,9 +126,11 @@
       One-login One-file
     </div>
     <nav class='header-nav'>
+      <a href="/list"><button class="btn btn-primary nav-item" type="submit">Список пользователей</button></a>
       <form class="form-signin" method="post" th:action="@{/logout}">
-        <button class="btn btn-primary nav-item" type="submit">Log Out</button>
+        <button class="btn btn-primary nav-item" type="submit">Выйти</button>
       </form>
+
     </nav>
   </div>
 </header>
@@ -165,7 +162,6 @@
               <div class="password-show-button form-text" id="togglePassword">Показать</div>
             </div>
             <input type="button" class="btn btn-primary password-generate-btn" id="btn" value="Генерация пароля"/>
-            <input type="button" class="btn btn-primary password-generate-btn" id="btn" value="Генерация пароля"/>
           </div>
           <div class="form-item password-generate">
 
@@ -180,7 +176,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-center align-items-center bottom">
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary">Загрузить</button>
         </div>
       </form>
     </div>
@@ -214,7 +210,7 @@
 
 
   <script th:src="@{js/jquery-3.5.1.js}"></script>
-  <script th:src="@{js/jsdelivr-4.js}"></script>
+  <script th:src="@{js/bootstrap.4.6.js}"></script>
   <script th:src="@{js/upload.js}"></script>
 
 
