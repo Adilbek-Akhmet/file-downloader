@@ -2,21 +2,15 @@ package sp.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RequestCallback;
-import org.springframework.web.client.ResponseExtractor;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sp.dto.DownloadPrefix;
 import sp.dto.FileRequest;
 
@@ -27,20 +21,15 @@ import sp.model.FolderStorage;
 import sp.service.impl.FileServiceImpl;
 
 import java.io.*;
-import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Slf4j
 @Controller
@@ -58,26 +47,26 @@ public class FileController {
     }
 
     @PostMapping("upload")
-    public String save(@RequestParam("multipart") MultipartFile file, @ModelAttribute("file") FileRequest fileRequest, Model model)
+    public String save(@RequestParam("multipart") MultipartFile file, @ModelAttribute("file") FileRequest fileRequest, RedirectAttributes redirectAttributes)
             throws IOException, ParseException {
 
         if (fileService.findOneByLogin(fileRequest.getLogin()).isPresent()) {
-            model.addAttribute("message", "Введите другое имя пользователя!");
-            return "upload";
+            redirectAttributes.addFlashAttribute("message", "Введите другое имя пользователя!");
+            return "redirect:/upload";
         }
 
         if (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(fileRequest.getTime()).before(Date.valueOf(LocalDate.now()))) {
-            model.addAttribute("message", "Неверная дата!");
-            return "upload";
+            redirectAttributes.addFlashAttribute("message", "Неверная дата!");
+            return "redirect:/upload";
         }
 
 
         fileRequest.setFile(file);
         FileResponse fileResponse = fileService.saveUser(fileRequest);
         fileResponse.setPassword(fileRequest.getPassword());
-        model.addAttribute("response", fileResponse);
-        model.addAttribute("file", new FileRequest());
-        return "upload";
+        redirectAttributes.addFlashAttribute("response", fileResponse);
+        redirectAttributes.addFlashAttribute("file", new FileRequest());
+        return "redirect:/upload";
     }
 
     @GetMapping("list")

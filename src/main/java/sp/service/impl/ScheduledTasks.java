@@ -2,9 +2,6 @@ package sp.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 
 @Slf4j
