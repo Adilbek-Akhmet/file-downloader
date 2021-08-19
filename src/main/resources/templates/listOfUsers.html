@@ -2,61 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Список пользователей</title>
+    <title>Список файлов</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap-4.css}">
-    <style>
-        /* Header */
-        header {
-            background: #f7f7f7;
-            padding: 15px 0;
-            transition: 0.2s linear;
-        }
-
-        .header-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 90%;
-            margin: 0 auto;
-        }
-
-        .header-nav {
-            display: flex;
-        }
-
-        .nav-item {
-            margin-left: 30px;
-            transition: 0.1s linear;
-        }
-
-        .nav-item:first-child {
-            margin-left: 0;
-        }
-
-        .nav-item:hover {
-            color: #02b7db;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 
 <body>
-<header>
-    <div class="header-inner">
-        <div class="header-brand">
-            One-login One-file
-        </div>
-        <nav class='header-nav'>
-            <a href="/upload"><button class="btn btn-primary nav-item ml-1" type="submit">Загрузить</button></a>
-            <a th:if="${isSuperAdmin}" href="/admin/create"><button class="btn btn-primary nav-item ml-1" type="submit">Добавить админа</button></a>
-            <a th:if="${isSuperAdmin}" href="/admin/list"><button class="btn btn-primary nav-item ml-1" type="submit">Список админов</button></a>
-            <form class="form-signin" method="post" th:action="@{/logout}">
-                <button class="btn btn-primary nav-item" type="submit">Выйти</button>
-            </form>
 
-        </nav>
-    </div>
-</header>
-
+<header th:replace="/fragments/header.html::topNavigation"></header>
 
 <table class="table">
     <thead>

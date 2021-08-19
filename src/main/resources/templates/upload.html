@@ -5,144 +5,19 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/bootstrap-4.css}">
+  <link rel="stylesheet" th:href="@{/css/header.css}">
+  <link rel="stylesheet" th:href="@{/css/result-box.css}">
+  <link rel="stylesheet" th:href="@{/css/form.css}">
   <title>Загрузить</title>
-  <style>
-
-    body {
-      margin: 0;
-      overflow-x: hidden;
-      font-size: 16px;
-      color: #333;
-    }
-
-    .form {
-      border: 2px solid #333;
-      border-radius: 10px;
-      margin-top: 50px;
-    }
-
-    .form-content {
-      padding: 15px;
-    }
-
-    .form-item {
-      margin-bottom: 20px;
-    }
-
-    .bottom {
-      border-top: 2px solid #333;
-      padding: 10px 0;
-    }
-
-    .password-input-inner {
-      display: flex;
-      align-items: center;
-    }
-
-    .password-show-button {
-      cursor: pointer;
-      text-decoration-style: dashed;
-      color: #524f4f;
-    }
-
-    .password-generate-btn {
-      margin-top: 10px;
-    }
-
-    /* Result box */
-    .result-box {
-      border: 2px solid #333;
-      border-radius: 10px;
-      margin-top: 50px;
-      margin-bottom: 50px;
-      padding: 15px;
-    }
-
-    .result-title {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    .result-item {
-      display: flex;
-      width: auto;
-      margin-bottom: 10px;
-    }
-
-
-    .result-item-name {
-      color: #000;
-      font-weight: 500;
-      margin-right: 5px;
-    }
-
-    .result-item-value {
-      word-break: break-all;
-    }
-
-    /* Header */
-    header {
-      background: #f7f7f7;
-      padding: 15px 0;
-      transition: 0.2s linear;
-    }
-
-    .header-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 90%;
-      margin: 0 auto;
-    }
-
-    .header-nav {
-      display: flex;
-    }
-
-    .nav-item {
-      margin-left: 30px;
-      transition: 0.1s linear;
-    }
-
-    .nav-item:first-child {
-      margin-left: 0;
-    }
-
-    .nav-item:hover {
-      color: #02b7db;
-    }
-  </style>
-</head>
-
 <body>
-<header>
-  <div class="header-inner">
-    <div class="header-brand">
-      One-login One-file
-    </div>
-    <nav class='header-nav'>
-      <a th:if="${isSuperAdmin}" href="/admin/create"><button class="btn btn-primary nav-item ml-1" type="submit">Добавить админа</button></a>
-      <a th:if="${isSuperAdmin}" href="/admin/list"><button class="btn btn-primary nav-item ml-1" type="submit">Список админов</button></a>
-      <a href="/list"><button class="btn btn-primary nav-item ml-1" type="submit">Список пользователей</button></a>
-      <form class="form-signin" method="post" th:action="@{/logout}">
-        <button class="btn btn-primary nav-item" type="submit">Выйти</button>
-      </form>
 
-    </nav>
-  </div>
-</header>
-
+<header th:replace="/fragments/header.html::topNavigation"></header>
 
 
   <div class="row justify-content-center">
     <div class="col-lg-5 md">
 
-      <div id="myAlert" class="error mt-3" th:if="${message != null}">
-        <div class="alert alert-danger alert-dismissible fade show">
-          <strong>Error!</strong> <span th:text="${message}"></span>
-          <button type="button" id="close" class="close" data-dismiss="alert">&times;</button>
-        </div>
-      </div>
+      <div th:replace="/fragments/message.html::message"></div>
 
       <form class="form" th:action="@{/upload}" th:object="${file}" method="post" encType="multipart/form-data">
         <div class="form-content">
@@ -206,10 +81,7 @@
   </div>
 
 
-  <script th:src="@{/js/jquery-3.5.1.js}"></script>
-  <script th:src="@{/js/bootstrap.4.6.js}"></script>
-  <script th:src="@{/js/upload.js}"></script>
-
+  <th:block th:replace="/fragments/js.html::scripts"></th:block>
 
 </body>
 </html>

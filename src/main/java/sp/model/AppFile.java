@@ -39,6 +39,8 @@ public class AppFile implements UserDetails {
 
     private String password;
 
+    @ManyToOne
+    private Admin admin;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
