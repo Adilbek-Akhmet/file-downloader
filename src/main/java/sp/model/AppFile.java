@@ -9,9 +9,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 @Data
 @Entity
@@ -27,7 +30,7 @@ public class AppFile implements UserDetails {
 
     private String fileName;
 
-    private Instant expiredAt;
+    private Date expiredAt;
 
     private String url;
 

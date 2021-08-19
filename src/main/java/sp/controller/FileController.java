@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +21,16 @@ import sp.dto.FileResponse;
 import sp.model.AppFile;
 
 import sp.model.FolderStorage;
+import sp.model.Role;
 import sp.service.impl.FileServiceImpl;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.sql.Date;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.Instant;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +46,8 @@ public class FileController {
     private final DownloadPrefix downloadPrefix;
 
     @GetMapping("upload")
-    public String saveFile(Model model) {
+    public String saveFile(Model model, @AuthenticationPrincipal UserDetails userDetail) {
+        model.addAttribute("isSuperAdmin", userDetail.getAuthorities().contains(new SimpleGrantedAuthority(Role.SUPER_ADMIN.name())));
         model.addAttribute("file", new FileRequest());
         return "upload";
     }
@@ -50,12 +56,22 @@ public class FileController {
     public String save(@RequestParam("multipart") MultipartFile file, @ModelAttribute("file") FileRequest fileRequest, RedirectAttributes redirectAttributes)
             throws IOException, ParseException {
 
+        if (fileRequest.getLogin().length() < 3) {
+            redirectAttributes.addFlashAttribute("message", "Имя пользователя должен состоять из три или более символов");
+            return "redirect:/upload";
+        }
+
+        if (fileRequest.getPassword().length() < 3) {
+            redirectAttributes.addFlashAttribute("message", "Пароль должен состоять из три или более символов");
+            return "redirect:/upload";
+        }
+
         if (fileService.findOneByLogin(fileRequest.getLogin()).isPresent()) {
             redirectAttributes.addFlashAttribute("message", "Введите другое имя пользователя!");
             return "redirect:/upload";
         }
 
-        if (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(fileRequest.getTime()).before(Date.valueOf(LocalDate.now()))) {
+        if (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(fileRequest.getTime()).before(java.util.Date.from(Instant.now()))) {
             redirectAttributes.addFlashAttribute("message", "Неверная дата!");
             return "redirect:/upload";
         }
@@ -70,11 +86,9 @@ public class FileController {
     }
 
     @GetMapping("list")
-    public String listAllUsers(Model model) {
-        if (fileService.findAll().size() == 0) {
-            model.addAttribute("message", "Введите другое имя пользователя!");
-            return "listOfUsers";
-        }
+    public String listAllUsers(Model model, @AuthenticationPrincipal UserDetails userDetail) {
+        model.addAttribute("isSuperAdmin", userDetail.getAuthorities().contains(new SimpleGrantedAuthority(Role.SUPER_ADMIN.name())));
+
         List<AppFile> reverseSorted = fileService.findAll().stream()
                 .sorted(Comparator.comparing(AppFile::getId).reversed())
                 .collect(Collectors.toList());

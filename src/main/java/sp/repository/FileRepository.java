@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import sp.model.AppFile;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,6 @@ public interface FileRepository extends JpaRepository<AppFile, Long> {
 
     Optional<AppFile> findByUsernameAndUrl(String username, String url);
 
-    List<AppFile> findAllByExpiredAtBefore(Instant time);
+    List<AppFile> findAllByExpiredAtBefore(Date time);
 
 }

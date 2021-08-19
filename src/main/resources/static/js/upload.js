@@ -27,7 +27,8 @@ btn.addEventListener('click', () => {
 })
 
 $(document).ready(function(){
-    $(".close").click(function(){
-        $("#myAlert").alert('close');
+    $("#close").click(function(){
+        console.log(document.querySelector("#myAlert"));
+        document.querySelector("#myAlert").style.display = "none";
     });
 });

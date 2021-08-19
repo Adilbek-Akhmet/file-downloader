@@ -31,17 +31,14 @@ public class FileServiceImpl {
     public FileResponse saveUser(FileRequest fileRequest) throws IOException, ParseException {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        Date format = simpleDateFormat.parse(fileRequest.getTime());
-
-        Instant instant = format.toInstant();
+        Date date = simpleDateFormat.parse(fileRequest.getTime());
 
         String url = UUID.randomUUID().toString();
 
         AppFile appFile = AppFile.builder()
                 .fileName(fileRequest.getFile().getOriginalFilename())
-                .expiredAt(instant)
+                .expiredAt(date)
                 .url(url)
                 .username(fileRequest.getLogin())
                 .password(fileRequest.getPassword())

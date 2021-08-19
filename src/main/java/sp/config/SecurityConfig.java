@@ -1,6 +1,7 @@
 package sp.config;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -15,29 +16,35 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 import sp.dto.DownloadPrefix;
 import sp.model.Admin;
 import sp.model.Role;
+import sp.model.SuperAdmin;
+import sp.repository.AdminRepository;
+import sp.service.impl.AdminServiceImpl;
 import sp.service.impl.UserServiceImpl;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig  {
 
-    private final UserServiceImpl userService;
-    private final PasswordEncoder passwordEncoder;
-
     @Configuration
     @Order(1)
     @AllArgsConstructor
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private final DaoAuthenticationProvider daoAuthenticationProvider;
         private final DownloadPrefix downloadPrefix;
+        private final UserServiceImpl userService;
+        private final PasswordEncoder passwordEncoder;
 
         protected void configure(HttpSecurity http) throws Exception {
             http
@@ -50,7 +57,15 @@ public class SecurityConfig  {
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) {
-            auth.authenticationProvider(daoAuthenticationProvider);
+            auth.authenticationProvider(daoAuthenticationProviderUser());
+        }
+
+        @Bean()
+        public DaoAuthenticationProvider daoAuthenticationProviderUser() {
+            DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+            provider.setPasswordEncoder(passwordEncoder);
+            provider.setUserDetailsService(userService);
+            return provider;
         }
 
     }
@@ -59,7 +74,9 @@ public class SecurityConfig  {
         @AllArgsConstructor
         public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-            private final Admin admin;
+            private final SuperAdmin superAdmin;
+            private final AdminRepository adminRepository;
+            private final AdminServiceImpl adminService;
             private final PasswordEncoder passwordEncoder;
 
             @Override
@@ -71,7 +88,9 @@ public class SecurityConfig  {
                                 .antMatchers("/login")
                                     .permitAll()
                                 .antMatchers("/upload", "/logout", "/list")
-                                .hasAuthority("ADMIN")
+                                    .hasAnyAuthority(Role.ADMIN.name(), Role.SUPER_ADMIN.name())
+                                .antMatchers("/admin/create", "/admin/list")
+                                .hasAuthority(Role.SUPER_ADMIN.name())
                         )
                         .formLogin()
                             .loginPage("/")
@@ -84,10 +103,13 @@ public class SecurityConfig  {
 
             @Override
             protected UserDetailsService userDetailsService() {
+                if (adminRepository.findByUsername(superAdmin.getUsername()).isPresent()) {
+                    throw new IllegalStateException("ошибка: Super Admin с таким именем уже существует в admin table");
+                }
                 UserDetails userDetails = User
-                        .withUsername(admin.getUsername())
-                        .password(passwordEncoder.encode(admin.getPassword()))
-                        .authorities(Role.ADMIN.name())
+                        .withUsername(superAdmin.getUsername())
+                        .password(passwordEncoder.encode(superAdmin.getPassword()))
+                        .authorities(Role.SUPER_ADMIN.name())
                         .build();
                 return new InMemoryUserDetailsManager(userDetails);
             }
@@ -95,14 +117,18 @@ public class SecurityConfig  {
             @Override
             protected void configure(AuthenticationManagerBuilder auth) throws Exception {
                 auth.userDetailsService(userDetailsService());
+                auth.authenticationProvider(daoAuthenticationProviderAdmin());
+            }
+
+            @Bean()
+            public DaoAuthenticationProvider daoAuthenticationProviderAdmin() {
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+                provider.setPasswordEncoder(passwordEncoder);
+                provider.setUserDetailsService(adminService);
+                return provider;
             }
         }
 
-    @Bean()
-    public DaoAuthenticationProvider daoAuthenticationProviderUser() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userService);
-        return provider;
-    }
+
+
 }

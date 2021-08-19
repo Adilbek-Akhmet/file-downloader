@@ -2,6 +2,8 @@ package sp.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +26,12 @@ public class ScheduledTasks {
     private final FolderStorage folderStorage;
     private final FileFolderStorageServiceImpl fileFolderStorageService;
 
+    @Async
     @Transactional
     @Scheduled(fixedRate = 1000*60)
     public void reportCurrentTime() throws IOException {
 
-        List<AppFile> appFiles = fileRepository.findAllByExpiredAtBefore(Instant.now().plusSeconds(60 * 60 * 6));
+        List<AppFile> appFiles = fileRepository.findAllByExpiredAtBefore(java.util.Date.from(Instant.now()));
 
         if (appFiles.size() != 0) {
             for (AppFile appFile: appFiles) {

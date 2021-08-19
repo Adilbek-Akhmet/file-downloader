@@ -1,11 +1,6 @@
 {
   "groups": [
     {
-      "name": "admin",
-      "type": "sp.model.Admin",
-      "sourceType": "sp.model.Admin"
-    },
-    {
       "name": "download",
       "type": "sp.dto.DownloadPrefix",
       "sourceType": "sp.dto.DownloadPrefix"
@@ -14,19 +9,14 @@
       "name": "folder.storage",
       "type": "sp.model.FolderStorage",
       "sourceType": "sp.model.FolderStorage"
+    },
+    {
+      "name": "super.admin",
+      "type": "sp.model.SuperAdmin",
+      "sourceType": "sp.model.SuperAdmin"
     }
   ],
   "properties": [
-    {
-      "name": "admin.password",
-      "type": "java.lang.String",
-      "sourceType": "sp.model.Admin"
-    },
-    {
-      "name": "admin.username",
-      "type": "java.lang.String",
-      "sourceType": "sp.model.Admin"
-    },
     {
       "name": "download.domain",
       "type": "java.lang.String",
@@ -41,6 +31,16 @@
       "name": "folder.storage.path",
       "type": "java.lang.String",
       "sourceType": "sp.model.FolderStorage"
+    },
+    {
+      "name": "super.admin.password",
+      "type": "java.lang.String",
+      "sourceType": "sp.model.SuperAdmin"
+    },
+    {
+      "name": "super.admin.username",
+      "type": "java.lang.String",
+      "sourceType": "sp.model.SuperAdmin"
     }
   ],
   "hints": []
