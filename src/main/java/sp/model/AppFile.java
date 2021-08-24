@@ -9,9 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -39,12 +36,11 @@ public class AppFile implements UserDetails {
 
     private String password;
 
-    @ManyToOne
-    private Admin admin;
+    private String user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(Role.USER.name()));
+        return Collections.singletonList(new SimpleGrantedAuthority(Role.FILE_USER.name()));
     }
 
     @Override

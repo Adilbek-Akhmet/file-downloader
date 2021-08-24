@@ -46,14 +46,14 @@ public class FileController {
     private final DownloadPrefix downloadPrefix;
 
     @GetMapping("upload")
-    public String saveFile(Model model, @AuthenticationPrincipal UserDetails userDetail) {
-        model.addAttribute("isSuperAdmin", userDetail.getAuthorities().contains(new SimpleGrantedAuthority(Role.SUPER_ADMIN.name())));
+    public String saveFile(Model model) {
         model.addAttribute("file", new FileRequest());
         return "upload";
     }
 
     @PostMapping("upload")
-    public String save(@RequestParam("multipart") MultipartFile file, @ModelAttribute("file") FileRequest fileRequest, RedirectAttributes redirectAttributes)
+    public String save(@RequestParam("multipart") MultipartFile file, @ModelAttribute("file") FileRequest fileRequest,
+                       RedirectAttributes redirectAttributes)
             throws IOException, ParseException {
 
         if (fileRequest.getLogin().length() < 3) {
@@ -86,15 +86,24 @@ public class FileController {
     }
 
     @GetMapping("list")
-    public String listAllUsers(Model model, @AuthenticationPrincipal UserDetails userDetail) {
-        model.addAttribute("isSuperAdmin", userDetail.getAuthorities().contains(new SimpleGrantedAuthority(Role.SUPER_ADMIN.name())));
+    public String listAllFiles(Model model, @AuthenticationPrincipal UserDetails userDetail) {
+        boolean isAdmin = userDetail.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.name()));
+        model.addAttribute("isAdmin", isAdmin);
 
-        List<AppFile> reverseSorted = fileService.findAll().stream()
-                .sorted(Comparator.comparing(AppFile::getId).reversed())
-                .collect(Collectors.toList());
+        List<AppFile> reverseSorted;
+        if (!isAdmin) {
+            reverseSorted = fileService.findAllByUser(userDetail.getUsername()).stream()
+                    .sorted(Comparator.comparing(AppFile::getId).reversed())
+                    .collect(Collectors.toList());
+        } else {
+            reverseSorted = fileService.findAll().stream()
+                    .sorted(Comparator.comparing(AppFile::getId).reversed())
+                    .collect(Collectors.toList());
+        }
+
         model.addAttribute("downloadPrefix", downloadPrefix);
         model.addAttribute("list", reverseSorted);
-        return "listOfUsers";
+        return "listOfFiles";
     }
 
 
@@ -116,7 +125,7 @@ public class FileController {
 
         InputStreamResource resource = new InputStreamResource(new FileInputStream(filePathFull));
 
-        log.info("{} скачал файл с path-ом {}", appFile.getUsername(), filePathFull);
+        log.info("FileUser {} скачал файл с path-ом {}", appFile.getUsername(), filePathFull);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))

@@ -43,7 +43,7 @@ public class ScheduledTasks {
                 boolean isDeleted = fileFolderStorageService.delete(parentPath.toString());
 
                 if (isDeleted) {
-                    log.info("Username {} с файл path-ом {} был удален", appFile.getUsername(), parentPath);
+                    log.info("FileUSER {} с файл path-ом {} был удален", appFile.getUsername(), parentPath);
                     fileRepository.delete(appFile);
                 }
             }

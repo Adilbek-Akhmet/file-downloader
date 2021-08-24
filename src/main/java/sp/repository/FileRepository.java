@@ -14,6 +14,8 @@ public interface FileRepository extends JpaRepository<AppFile, Long> {
 
     Optional<AppFile> findByUsername(String username);
 
+    List<AppFile> findAllByUser(String admin);
+
     Optional<AppFile> findByUsernameAndUrl(String username, String url);
 
     List<AppFile> findAllByExpiredAtBefore(Date time);

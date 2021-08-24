@@ -6,8 +6,8 @@
    spring.servlet.multipart.max-request-size
    
    folder.storage.path
-   super.admin.username
-   super.admin.password
+   admin.username
+   admin.password
    download.domain
    download.prefix
    

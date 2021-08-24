@@ -2,6 +2,8 @@ package sp.config;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,18 +18,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 import sp.dto.DownloadPrefix;
-import sp.model.Admin;
 import sp.model.Role;
-import sp.model.SuperAdmin;
-import sp.repository.AdminRepository;
-import sp.service.impl.AdminServiceImpl;
+import sp.model.Admin;
+import sp.repository.UserRepository;
 import sp.service.impl.UserServiceImpl;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import sp.service.impl.FileUserServiceImpl;
 
 
 @Slf4j
@@ -39,18 +35,23 @@ public class SecurityConfig  {
 
     @Configuration
     @Order(1)
-    @AllArgsConstructor
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         private final DownloadPrefix downloadPrefix;
-        private final UserServiceImpl userService;
+        private final FileUserServiceImpl userService;
         private final PasswordEncoder passwordEncoder;
+
+        public ApiWebSecurityConfigurationAdapter(DownloadPrefix downloadPrefix, FileUserServiceImpl userService, @Qualifier("v1") PasswordEncoder passwordEncoder) {
+            this.downloadPrefix = downloadPrefix;
+            this.userService = userService;
+            this.passwordEncoder = passwordEncoder;
+        }
 
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .antMatcher("/" + downloadPrefix.getPrefix() + "/**")
                     .authorizeRequests(authorize -> authorize
-                            .anyRequest().hasAuthority("USER")
+                            .anyRequest().hasAuthority(Role.FILE_USER.name())
                     )
                     .httpBasic();
         }
@@ -71,13 +72,19 @@ public class SecurityConfig  {
     }
 
         @Configuration
-        @AllArgsConstructor
         public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-            private final SuperAdmin superAdmin;
-            private final AdminRepository adminRepository;
-            private final AdminServiceImpl adminService;
+            private final Admin admin;
+            private final UserRepository userRepository;
+            private final UserServiceImpl userService;
             private final PasswordEncoder passwordEncoder;
+
+            public FormLoginWebSecurityConfigurerAdapter(Admin admin, UserRepository userRepository, UserServiceImpl userService, @Qualifier("v2") PasswordEncoder passwordEncoder) {
+                this.admin = admin;
+                this.userRepository = userRepository;
+                this.userService = userService;
+                this.passwordEncoder = passwordEncoder;
+            }
 
             @Override
             protected void configure(HttpSecurity http) throws Exception {
@@ -87,10 +94,12 @@ public class SecurityConfig  {
                                     .permitAll()
                                 .antMatchers("/login")
                                     .permitAll()
+                                .antMatchers("/user/profile/update")
+                                    .hasAuthority(Role.USER.name())
                                 .antMatchers("/upload", "/logout", "/list")
-                                    .hasAnyAuthority(Role.ADMIN.name(), Role.SUPER_ADMIN.name())
-                                .antMatchers("/admin/create", "/admin/list")
-                                .hasAuthority(Role.SUPER_ADMIN.name())
+                                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
+                                .antMatchers("/user/create", "/user/list")
+                                    .hasAuthority(Role.ADMIN.name())
                         )
                         .formLogin()
                             .loginPage("/")
@@ -103,13 +112,13 @@ public class SecurityConfig  {
 
             @Override
             protected UserDetailsService userDetailsService() {
-                if (adminRepository.findByUsername(superAdmin.getUsername()).isPresent()) {
-                    throw new IllegalStateException("ошибка: Super Admin с таким именем уже существует в admin table");
+                if (userRepository.findByUsername(admin.getUsername()).isPresent()) {
+                    throw new IllegalStateException("ошибка: Пользователь с таким именем уже существует");
                 }
                 UserDetails userDetails = User
-                        .withUsername(superAdmin.getUsername())
-                        .password(passwordEncoder.encode(superAdmin.getPassword()))
-                        .authorities(Role.SUPER_ADMIN.name())
+                        .withUsername(admin.getUsername())
+                        .password("{bcrypt}" + passwordEncoder.encode(admin.getPassword()))
+                        .authorities(Role.ADMIN.name())
                         .build();
                 return new InMemoryUserDetailsManager(userDetails);
             }
@@ -124,7 +133,7 @@ public class SecurityConfig  {
             public DaoAuthenticationProvider daoAuthenticationProviderAdmin() {
                 DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
                 provider.setPasswordEncoder(passwordEncoder);
-                provider.setUserDetailsService(adminService);
+                provider.setUserDetailsService(userService);
                 return provider;
             }
         }

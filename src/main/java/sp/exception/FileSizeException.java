@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @ControllerAdvice
 public class FileSizeException {
 
-    @ExceptionHandler({MultipartException.class, FileSizeLimitExceededException.class, IllegalStateException.class})
+    @ExceptionHandler({MultipartException.class, FileSizeLimitExceededException.class})
     public String handleMultipartException(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("message", "Слишком большой размер файла");
         return "redirect:/upload";

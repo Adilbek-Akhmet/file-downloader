@@ -28,7 +28,6 @@ public class FileFolderStorageServiceImpl {
     public void copyToFolderStorage(MultipartFile multipartFile, String user) throws FileNotFoundException {
 
         String filePath = folderStorage.getPath() + File.separatorChar + user;
-        log.info("File Path {}", filePath);
         create(filePath);
 
         Path path = Path.of(filePath);

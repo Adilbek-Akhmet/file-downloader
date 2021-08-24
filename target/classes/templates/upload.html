@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="https://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -82,6 +82,6 @@
 
 
   <th:block th:replace="/fragments/js.html::scripts"></th:block>
-
+  <script th:src="@{/js/upload.js}"></script>
 </body>
 </html>

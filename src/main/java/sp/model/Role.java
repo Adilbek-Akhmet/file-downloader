@@ -1,5 +1,5 @@
 package sp.model;
 
 public enum Role {
-    ADMIN, USER, SUPER_ADMIN
+    USER, FILE_USER, ADMIN
 }

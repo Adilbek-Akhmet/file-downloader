@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Список файлов</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-4.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+
+</head>
+
+<body>
+
+<header th:replace="/fragments/header.html::topNavigation"></header>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Имя файла</th>
+        <th>Истекает</th>
+        <th>Логин</th>
+        <th>Пароль</th>
+        <th>URL</th>
+        <th sec:authorize="hasAuthority('ADMIN')">Пользователь</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="file : ${list}">
+        <td th:text="${list.indexOf(file) + 1}"></td>
+        <td th:text="${file.getFileName()}"></td>
+        <td th:text="${file.getExpiredAt()}"></td>
+        <td th:text="${file.getUsername()}"></td>
+        <td th:text="${file.getPassword()}"></td>
+        <td th:text="${downloadPrefix.getDomain() + '/' + downloadPrefix.getPrefix() + '/' + file.getUrl()}"></td>
+        <td sec:authorize="hasAuthority('ADMIN')" th:text="${file.getUser()}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<th:block th:replace="/fragments/js.html::scripts"></th:block>
+</body>
+</html>
