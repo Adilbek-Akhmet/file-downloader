@@ -1,0 +1,9 @@
+
+<div th:fragment="message">
+    <div id="myAlert" class="error mt-3" th:if="${message != null}">
+        <div class="alert alert-danger alert-dismissible fade show">
+            <strong>Error!</strong> <span th:text="${message}"></span>
+            <button type="button" id="close" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    </div>
+</div>

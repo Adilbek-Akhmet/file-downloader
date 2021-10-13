@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список пользователей</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-4.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/update.css}">
+    <link rel="stylesheet" th:href="@{/css/form.css}">
+</head>
+
+<body>
+
+<header th:replace="/fragments/header.html::topNavigation"></header>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Имя пользователя</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="userInfo : ${list}">
+        <td th:text="${list.indexOf(userInfo) + 1}"></td>
+        <td th:text="${userInfo.getUsername()}"></td>
+        <td>
+            <button class="btn btn-primary password-btn">Изменить пароль</button>
+            <input type="hidden" th:value="${userInfo.getUsername()}" class="userId">
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="password-edit-outer" id="password-modal">
+        <form class="box" method="post" th:action="@{/user/update}" th:object="${userDto}" onsubmit="return validate()">
+            <div class="top">
+                <div class="filler"></div>
+                <div class="title">
+                    Пароль
+                </div>
+                <div class="filler close-outer">
+                    <button class="close-btn" type="button" id="close-password-btn">
+                        x
+                    </button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="form-item">
+                    <label for="username" class="form-label">Имя пользователя</label>
+                    <div class="password-input-inner">
+                        <input type="text" class="form-control result" id="username" th:field="*{username}" readonly>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <label for="password1" class="form-label">Введите новый пароль</label>
+                    <div class="password-input-inner">
+                        <input type="password" class="form-control" id="password1" th:field="*{password}" required>
+                    </div>
+                    <p id="password1-res"></p>
+                </div>
+                <div class="form-item">
+                    <label for="password2" class="form-label">Повторите пароль</label>
+                    <div class="password-input-inner">
+                        <input type="password" class="form-control" id="password2" th:field="*{reTypePassword}" required>
+                    </div>
+                    <div class="password-input-inner">
+                        <div class="password-show-button form-text" id="togglePassword">Показать</div>
+                    </div>
+                    <p id="password2-res"></p>
+                </div>
+            </div>
+            <div class="bottom">
+                <input type="submit" class="btn btn-primary submit-btn" value="Подтвердить">
+            </div>
+        </form>
+</div>
+
+
+<th:block th:replace="/fragments/js.html::scripts"></th:block>
+<script th:src="@{/js/update.js}"></script>
+</body>
+</html>

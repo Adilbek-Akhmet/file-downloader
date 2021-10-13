@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<header th:fragment="topNavigation">
+    <div class="header-inner">
+        <div class="header-brand">
+            One-login One-file
+        </div>
+        <nav class='header-nav'>
+            <a href="/upload" class="nav-item"><button class="btn btn-primary" type="submit">Загрузить</button></a>
+            <a href="/list" class="nav-item"><button class="btn btn-primary" type="submit">Список файлов</button></a>
+            <a sec:authorize="hasAuthority('ADMIN')" href="/user/create" class="nav-item"><button class="btn btn-primary" type="submit">Добавить пользователя</button></a>
+            <a sec:authorize="hasAuthority('ADMIN')" href="/user/list" class="nav-item"><button class="btn btn-primary" type="submit">Список пользователей</button></a>
+            <div class="dropdown">
+                <button onclick="myFunction()" class="nav-item img nav-item-btn" type="button">
+                    <img th:src="@{/images/user.png}" class="dropbtn" alt="">
+                </button>
+                <form class="dropdown-content" id="myDropdown" method="post" th:action="@{/logout}">
+                    <a class="btn btn-primary user-info" href="/user/profile/update" sec:authorize="hasAuthority('USER')"><span sec:authentication="name" class="nav-user-text"></span> </a>
+                    <div sec:authorize="hasAuthority('ADMIN')" class="user-info"><span sec:authentication="name" class="nav-user-text"></span></div>
+                    <button class="logout-link" type="submit">
+                        Выйти
+                    </button>
+                </form>
+            </div>
+        </nav>
+    </div>
+</header>

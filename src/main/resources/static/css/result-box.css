@@ -1,0 +1,22 @@
+/* Result box */
+.result-box {
+    border: 2px solid #333;
+    border-radius: 10px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 15px;
+}
+
+
+.result-item {
+    display: flex;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+
+.result-item-name {
+    color: #000;
+    font-weight: 500;
+    margin-right: 5px;
+}
